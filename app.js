@@ -13,7 +13,7 @@ app.use(cors({ origin: "*" }));
 
 // app.use("/api/ot", activitiesRoute);
 
-app.all("/mirror", (req, res) => {
+app.all("/", (req, res) => {
   res.status(200).send({
     code: 200,
     statustext: "OK",
@@ -23,7 +23,7 @@ app.all("/mirror", (req, res) => {
 });
 
 app.all("*", (req, res) =>
-  res.send("SOMETHING THAT'S LOVED IS NEVER LOST. SORRY BUT NOW YOU'RE LOST.")
+  res.send("SOMETHING THAT'S LOVED IS NEVER LOST. YOU'RE LOST NOW.")
 );
 
 app.listen(process.env.PORT, () => {
