@@ -13,7 +13,7 @@ app.use(cors({ origin: "*" }));
 
 // app.use("/api/ot", activitiesRoute);
 
-app.all("/", (req, res) => {
+app.all("/mirror", (req, res) => {
   res.status(200).send({
     code: 200,
     statustext: "OK",
