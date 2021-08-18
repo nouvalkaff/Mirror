@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.STRING,
       },
-      full_Name: {
+      full_name: {
         type: Sequelize.STRING,
       },
       username: {
@@ -20,7 +20,7 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
       },
-      profile_Bio: {
+      profile_bio: {
         type: Sequelize.STRING,
       },
       followers: {
@@ -32,7 +32,7 @@ module.exports = {
       session_id: {
         type: Sequelize.STRING,
       },
-      timestamp: {
+			timestamp: {
         type: Sequelize.BIGINT,
       },
       createdAt: {

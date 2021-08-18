@@ -6,11 +6,6 @@ const {
   logout,
 } = require("../controllers/registerLoginController");
 
-const {
-  validateRegister,
-  validateLogin,
-} = require("../middleware/validateRegisterLoginMiddleware");
-
 router.post("/register", register);
 
 router.post("/login", login);

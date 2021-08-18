@@ -13,8 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Gallery.init(
     {
-      user_id: DataTypes.INTEGER,
-      // photos: DataTypes.STRING,
+      user_id: DataTypes.STRING,
       photos: DataTypes.ARRAY(DataTypes.JSONB),
     },
     {

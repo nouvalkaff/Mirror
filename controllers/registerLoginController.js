@@ -1,37 +1,55 @@
 const bcrypt = require("bcrypt");
 const faker = require("faker");
+const Joi = require("joi");
 const { Op } = require("sequelize");
 
+const {
+  registerValidation,
+  loginValidation,
+  registerSchema,
+  loginSchema,
+} = require("../middleware/validateRegisterLoginMiddleware");
 const { User } = require("../models/index");
 
 exports.register = async (req, res) => {
   try {
-    const { Full_name, Username, Email, Password, Profile_Bio } = req.body;
-    console.log(req.session);
-    const existingUserByEmail = await User.findOne({
-      where: { Email },
+    const { full_name, username, email, password, profile_bio } = req.body;
+
+    await registerSchema.validateAsync(req.body);
+
+    const existingUserByemail = await User.findOne({
+      where: { email },
     });
 
-    const existingUserByUsername = await User.findOne({
-      where: { Username },
+    const existingUserByusername = await User.findOne({
+      where: { username },
     });
 
-    if (existingUserByEmail) {
+    if (!profile_bio) {
+      return res.status(409).send({
+        code: 409,
+        statustext: "Conflict",
+        success: false,
+        message: "Please fill in your profile bio",
+      });
+    }
+
+    if (existingUserByemail) {
       res.status(409).json({
         code: 409,
         success: false,
         statusText: "Conflict",
-        message: "Email is already registered.",
+        message: "email is already registered.",
       });
       return;
     }
 
-    if (existingUserByUsername) {
+    if (existingUserByusername) {
       res.status(409).json({
         code: 409,
         success: false,
         statusText: "Conflict",
-        message: "Username is already registered.",
+        message: "username is already registered.",
       });
       return;
     }
@@ -40,21 +58,21 @@ exports.register = async (req, res) => {
     await User.create({
       ...req.body,
       id: faker.datatype.uuid(),
-      Password: bcrypt.hashSync(Password, 15),
-      Timestamp: timestamp,
-      Followers: Math.round(Math.random() * 10),
-      Following: Math.round(Math.random() * 10),
+      password: bcrypt.hashSync(password, 15),
+      timestamp: timestamp,
+      followers: Math.round(Math.random() * 10),
+      following: Math.round(Math.random() * 10),
     });
 
     const userData = await User.findOne({
-      where: { Email },
+      where: { email },
       attributes: {
         exclude: [
           "createdAt",
           "updatedAt",
-          "Timestamp",
-          "Password",
-          "Session_id",
+          "timestamp",
+          "password",
+          "session_id",
           "id",
         ],
       },
@@ -65,31 +83,37 @@ exports.register = async (req, res) => {
       success: true,
       statusText: "Created",
       message: "Successfully created a user",
-      result: userData,
+      data: userData,
     });
   } catch (error) {
     console.log(error);
+    const err = error.details[0].message || null;
     res.status(500).json({
       code: 500,
       success: false,
       statusText: "Internal Server Error",
-      message: "Failed to register, please try again",
+      message: {
+        shortMessage: "Failed to register, please try again",
+        error: err,
+      },
     });
   }
 };
 
 exports.login = async (req, res) => {
   try {
-    const { Email, Username, Password } = req.body;
+    const { email, username, password } = req.body;
 
-    if (!Email && !Username) {
+    await loginSchema.validateAsync(req.body);
+
+    if (!email && !username) {
       res.status(500).json({
         code: 500,
         success: false,
         statusText: "Internal Server Error",
         message: "Please input your email or username",
       });
-    } else if (!Password) {
+    } else if (!password) {
       res.status(500).json({
         code: 500,
         success: false,
@@ -100,7 +124,7 @@ exports.login = async (req, res) => {
 
     const existingUser = await User.findOne({
       where: {
-        [Op.or]: [{ Email }, { Username }],
+        [Op.or]: [{ email }, { username }],
       },
     });
     // console.log(session.store)
@@ -109,15 +133,15 @@ exports.login = async (req, res) => {
         code: 404,
         success: false,
         statusText: "Not Found",
-        message: "Email or Username is not registered",
+        message: "email or username is not registered",
       });
       return;
     }
 
     if (existingUser) {
       const verifyPwd = await bcrypt.compare(
-        Password,
-        existingUser.dataValues.Password
+        password,
+        existingUser.dataValues.password
       );
 
       if (verifyPwd == false) {
@@ -132,16 +156,19 @@ exports.login = async (req, res) => {
 
       //Update session Id coloumn
       if (verifyPwd == true) {
-        req.session.email = existingUser.dataValues.Email;
+        req.session.email = existingUser.dataValues.email;
         await User.update(
-          { Session_id: req.sessionID },
+          { session_id: req.sessionID },
           {
             where: {
-              [Op.or]: [{ Email }, { Username }],
+              [Op.or]: [{ email }, { username }],
             },
           }
         );
       }
+
+      const sess = req.session;
+      const sessID = req.sessionID;
 
       if (req.session.authenticated) {
         res.status(200).json({
@@ -150,7 +177,10 @@ exports.login = async (req, res) => {
           statusText: "OK",
           message: "Login success",
           // verifyPwd: verifyPwd,
-          // sessionInfo: req.session,
+          // sessionInfo: {
+          // 	sess,
+          // 	sessID
+          // },
         });
         return;
       } else if (verifyPwd == true) {
@@ -161,7 +191,10 @@ exports.login = async (req, res) => {
             statusText: "OK",
             message: "Login success",
             // verifyPwd: verifyPwd,
-            // sessionInfo: req.session,
+            // sessionInfo: {
+            // 	sess,
+            // 	sessID
+            // },
           });
         return;
       } else {
@@ -181,17 +214,24 @@ exports.login = async (req, res) => {
         statusText: "OK",
         message: "Login success",
         // verifyPwd: verifyPwd,
-        // sessionInfo: req.session,
+        // sessionInfo: {
+        // 		sess,
+        // 		sessID
+        // 	},
       });
       return;
     }
   } catch (error) {
     console.log(error);
+    const err = error.details[0].message || null;
     res.status(500).json({
       code: 500,
       success: false,
       statusText: "Internal Server Error",
-      message: "Failed to login, please try again",
+      message: {
+        shortMessage: "Failed to register, please try again",
+        error: err,
+      },
     });
   }
 };
@@ -200,8 +240,8 @@ exports.logout = async (req, res) => {
   try {
     if (req.session.email) {
       await User.update(
-        { Session_id: null },
-        { where: { Email: req.session.email } }
+        { session_id: null },
+        { where: { email: req.session.email } }
       );
 
       req.session.destroy((err) => {

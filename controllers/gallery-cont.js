@@ -1,6 +1,6 @@
 const AWS = require("aws-sdk");
 require("dotenv").config();
-const { Gallery } = require("../models");
+const { Gallery, User } = require("../models");
 
 var s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
@@ -21,6 +21,22 @@ exports.uploadPhoto = async (req, res) => {
     //   });
     //   return;
     // }
+
+    //Get user id
+    const emailUser = req.session.email;
+
+    if (!emailUser) {
+      return res.status(409).send({
+        code: 409,
+        statustext: "Conflict",
+        success: false,
+        message: "Please login first",
+      });
+    }
+
+    const userData = await User.findOne({
+      where: { email: emailUser },
+    });
 
     //Preparing the params for uploading to AWS S3
     var params = [];
@@ -63,7 +79,7 @@ exports.uploadPhoto = async (req, res) => {
     const imgURL = arrayOfObject();
 
     const sendToDB = await Gallery.create({
-      //user_id:
+      user_id: userData.dataValues.id,
       photos: imgURL,
     });
 
@@ -113,20 +129,20 @@ exports.getAllPhoto = async (req, res) => {
 };
 
 exports.getOnePhotobyUserID = async (req, res) => {
-  // SEKARANG MASIH PAKE ID GALLERY BUKAN USER
-  const id = req.query.id;
   try {
+    const user_id = req.query.user_id;
     const getImgByID = await Gallery.findOne({
       where: {
-        id: id,
+        user_id: user_id,
       },
     });
+
     if (!getImgByID) {
       res.status(404).json({
         code: 404,
         statustext: "Not Found",
         success: false,
-        message: "Gallery ID is not found",
+        message: "User ID is not found",
       });
     }
     return res.status(200).json({
@@ -148,12 +164,11 @@ exports.getOnePhotobyUserID = async (req, res) => {
 };
 
 exports.deletePhotosbyUserID = async (req, res) => {
-  // SEKARANG MASIH PAKE ID GALLERY BUKAN USER
-  const id = req.query.id;
   try {
+    const user_id = req.query.user_id;
     const delPhotos = await Gallery.destroy({
       where: {
-        id: id,
+        user_id: user_id,
       },
     });
     if (!delPhotos) {
@@ -161,7 +176,7 @@ exports.deletePhotosbyUserID = async (req, res) => {
         code: 404,
         statustext: "Not Found",
         success: false,
-        message: `Gallery ID is not found`,
+        message: `User ID is not found`,
       });
       return;
     }

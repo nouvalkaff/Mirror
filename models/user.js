@@ -10,24 +10,22 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  }
-  User.init(
-    {
-      full_Name: DataTypes.STRING,
-      username: DataTypes.STRING,
-      email: DataTypes.STRING,
-      password: DataTypes.STRING,
-      profile_Bio: DataTypes.STRING,
-      followers: DataTypes.INTEGER,
-      following: DataTypes.INTEGER,
-      session_id: DataTypes.STRING,
-      timestamp: DataTypes.BIGINT,
-    },
-    {
-      sequelize,
-      modelName: "User",
-      tableName: "User",
-    }
-  );
+  };
+  User.init({
+    full_name: DataTypes.STRING,
+    username: DataTypes.STRING,
+    email: DataTypes.STRING,
+    password: DataTypes.STRING,
+    profile_bio: DataTypes.STRING,
+    followers: DataTypes.INTEGER,
+    following: DataTypes.INTEGER,
+    session_id: DataTypes.STRING,
+		timestamp: DataTypes.BIGINT,
+  }, 
+	{
+    sequelize,
+    modelName: 'User',
+		tableName: 'User',
+  });
   return User;
 };

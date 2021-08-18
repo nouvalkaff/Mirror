@@ -9,11 +9,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       user_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         foreignKey: true,
       },
       photos: {
-        // type: Sequelize.STRING,
         type: Sequelize.ARRAY(Sequelize.JSONB),
       },
       createdAt: {
