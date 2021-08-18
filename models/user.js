@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     Profile_Bio: DataTypes.STRING,
     Followers: DataTypes.INTEGER,
     Following: DataTypes.INTEGER,
-    Session_id: DataTypes.STRING
+    Session_id: DataTypes.STRING,
+		Timestamp: DataTypes.BIGINT,
   }, {
     sequelize,
     modelName: 'User',
