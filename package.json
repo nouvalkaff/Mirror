@@ -7,8 +7,8 @@
     "node": "12.11.1"
   },
   "scripts": {
+    "test": "make test",
     "start": "node app.js",
-    "test": "node app.js",
   },
   "keywords": [],
   "author": "",
