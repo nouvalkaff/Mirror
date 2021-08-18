@@ -83,3 +83,100 @@ exports.uploadPhoto = async (req, res) => {
   }
   return;
 };
+
+exports.getAllPhoto = async (req, res) => {
+  try {
+    const allPhotos = await Gallery.findAll({
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+      order: [["id", "ASC"]],
+    });
+    res.status(200).json({
+      code: 200,
+      statustext: "OK",
+      success: true,
+      message: "All user photos have been retrieved succesfully",
+      data: allPhotos,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      code: 500,
+      statustext: "Internal Server Error",
+      success: false,
+      message: "Failed to get data",
+    });
+  }
+};
+
+exports.getOnePhotobyUserID = async (req, res) => {
+  // SEKARANG MASIH PAKE ID GALLERY BUKAN USER
+  const id = req.query.id;
+  try {
+    const getImgByID = await Gallery.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!getImgByID) {
+      res.status(404).json({
+        code: 404,
+        statustext: "Not Found",
+        success: false,
+        message: "Gallery ID is not found",
+      });
+    }
+    return res.status(200).json({
+      code: 200,
+      statustext: "OK",
+      success: true,
+      message: "Successfully retrieve user's photos",
+      data: getImgByID,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      code: 500,
+      statustext: "Internal Server Error",
+      success: false,
+      message: "Failed to get data",
+    });
+  }
+};
+
+exports.deletePhotosbyUserID = async (req, res) => {
+  // SEKARANG MASIH PAKE ID GALLERY BUKAN USER
+  const id = req.query.id;
+  try {
+    const delPhotos = await Gallery.destroy({
+      where: {
+        id: id,
+      },
+    });
+    if (!delPhotos) {
+      res.status(404).json({
+        code: 404,
+        statustext: "Not Found",
+        success: false,
+        message: `Gallery ID is not found`,
+      });
+      return;
+    }
+
+    return res.status(200).json({
+      code: 200,
+      statustext: "OK",
+      success: true,
+      message: "All photos of this user are deleted succesfully",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      code: 500,
+      statustext: "Internal Server Error",
+      success: false,
+      message: "Failed to get data",
+    });
+  }
+};
