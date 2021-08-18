@@ -9,9 +9,9 @@ app.use(express.json());
 
 app.use(cors({ origin: "*" }));
 
-// const activitiesRoute = require("./routes/activitiesRoute"),
+const galleryRoute = require("./routes/gallery-routes");
 
-// app.use("/api/ot", activitiesRoute);
+app.use("/mirror", galleryRoute);
 
 app.all("/", (req, res) => {
   res.status(200).send({
