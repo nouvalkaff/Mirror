@@ -12,15 +12,15 @@ exports.uploadPhoto = async (req, res) => {
     const files = req.files,
       foto = files.photos;
 
-    if (foto[0].size === undefined) {
-      res.status(400).json({
-        code: 400,
-        statustext: "Bad Request",
-        success: false,
-        message: "Please upload at least a photo",
-      });
-      return;
-    }
+    // if (foto[0].size >= undefined) {
+    //   res.status(400).json({
+    //     code: 400,
+    //     statustext: "Bad Request",
+    //     success: false,
+    //     message: "Please upload at least a photo",
+    //   });
+    //   return;
+    // }
 
     //Preparing the params for uploading to AWS S3
     var params = [];
@@ -52,8 +52,9 @@ exports.uploadPhoto = async (req, res) => {
     function arrayOfObject() {
       var respLink = [];
       for (let i = 0; i < foto.length; i++) {
+        let index = i + 1;
         const linkAOO = {
-          ["image" + i]: uploaded[i],
+          ["image" + index]: uploaded[i],
         };
         respLink.push(linkAOO);
       }
@@ -62,6 +63,7 @@ exports.uploadPhoto = async (req, res) => {
     const imgURL = arrayOfObject();
 
     const sendToDB = await Gallery.create({
+      //user_id:
       photos: imgURL,
     });
 

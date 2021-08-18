@@ -14,6 +14,6 @@ const s3upload = multer({
     }
     callback(null, true);
   },
-}).fields([{ name: "photos", maxCount: 4 }]);
+}).fields([{ name: "photos", maxCount: 9 }]);
 
 module.exports = { s3upload };
