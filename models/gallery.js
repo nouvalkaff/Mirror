@@ -13,12 +13,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   Gallery.init(
     {
-      User_id: DataTypes.INTEGER,
-      Photos: DataTypes.ARRAY(DataTypes.JSONB),
+      user_id: DataTypes.INTEGER,
+      photos: DataTypes.ARRAY(DataTypes.JSONB),
     },
     {
       sequelize,
       modelName: "Gallery",
+			tableName: "Gallery"
     }
   );
   return Gallery;
