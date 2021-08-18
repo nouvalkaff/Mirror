@@ -3,13 +3,13 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("Gallery", {
       id: {
-        // allowNull: false,
-        // autoIncrement: true,
+        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       user_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         foreignKey: true,
       },
       photos: {

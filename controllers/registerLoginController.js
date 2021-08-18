@@ -158,6 +158,9 @@ exports.login = async (req,res) => {
 				)
 			}
 
+			const sess = req.session
+			const sessID = req.sessionID
+
 			if(req.session.authenticated) {
 				res.status(200).json({
 					code: 200,
@@ -165,7 +168,10 @@ exports.login = async (req,res) => {
 					statusText: "OK",
 					message: "Login success",
 					// verifyPwd: verifyPwd,
-					// sessionInfo: req.session,
+					// sessionInfo: {
+					// 	sess,
+					// 	sessID
+					// },
 				})
 				return
 			} else if (verifyPwd == true) {
@@ -177,7 +183,10 @@ exports.login = async (req,res) => {
 					statusText: "OK",
 					message: "Login success",
 					// verifyPwd: verifyPwd,
-					// sessionInfo: req.session,
+					// sessionInfo: {
+					// 	sess,
+					// 	sessID
+					// },
 				})
 				return
 			} else {
@@ -197,7 +206,10 @@ exports.login = async (req,res) => {
 				statusText: "OK",
 				message: "Login success",
 				// verifyPwd: verifyPwd,
-				// sessionInfo: req.session,
+				// sessionInfo: {
+				// 		sess,
+				// 		sessID
+				// 	},
 			})
 			return
 		}

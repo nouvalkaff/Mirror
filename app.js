@@ -10,14 +10,14 @@ app.use(express.json());
 
 app.use(cors({ origin: "*" }));
 
-const { sessionMiddleware } = require("./middleware/sessionMiddleware")
+const { sessionMiddleware } = require("./middleware/sessionMiddleware");
 
-app.use(sessionMiddleware)
+app.use(sessionMiddleware);
 
-// const activitiesRoute = require("./routes/activitiesRoute"),
-const registerLoginRoute = require("./routes/registerLoginRoute.js")
-// app.use("/api/ot", activitiesRoute);
-app.use("/api/mirror", registerLoginRoute)
+const galleryRoute = require("./routes/gallery-routes"),
+  registerLoginRoute = require("./routes/registerLoginRoute.js");
+
+app.use("/mirror", galleryRoute, registerLoginRoute);
 
 app.all("/", (req, res) => {
   res.status(200).send({

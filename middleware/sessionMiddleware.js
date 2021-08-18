@@ -6,8 +6,8 @@ require("dotenv").config()
 const sess_lifetime = 1000*60*60*12
 exports.sessionMiddleware = session({
 	name: process.env.SESS_NAME,
-	resave: false,
-	saveUninitialized: false,
+	resave: true,
+	saveUninitialized: true,
 	secret: process.env.SESS_SECRET,
 	store: new MemoryStore({
 		checkPeriod: sess_lifetime,
