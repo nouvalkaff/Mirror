@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       followers: DataTypes.INTEGER,
       following: DataTypes.INTEGER,
       session_id: DataTypes.STRING,
+      timestamp: DataTypes.BIGINT,
     },
     {
       sequelize,

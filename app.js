@@ -9,9 +9,14 @@ app.use(express.json());
 
 app.use(cors({ origin: "*" }));
 
-const galleryRoute = require("./routes/gallery-routes");
+const { sessionMiddleware } = require("./middleware/sessionMiddleware");
 
-app.use("/mirror", galleryRoute);
+app.use(sessionMiddleware);
+
+const galleryRoute = require("./routes/gallery-routes"),
+  registerLoginRoute = require("./routes/registerLoginRoute.js");
+
+app.use("/mirror", galleryRoute, registerLoginRoute);
 
 app.all("/", (req, res) => {
   res.status(200).send({
