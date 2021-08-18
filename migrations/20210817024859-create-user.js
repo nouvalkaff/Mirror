@@ -32,7 +32,7 @@ module.exports = {
       session_id: {
         type: Sequelize.STRING,
       },
-			timestamp: {
+      timestamp: {
         type: Sequelize.BIGINT,
       },
       createdAt: {
