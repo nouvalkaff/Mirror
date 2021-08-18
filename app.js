@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const session = require("express-session")
 
 require("dotenv").config();
 
@@ -9,9 +10,14 @@ app.use(express.json());
 
 app.use(cors({ origin: "*" }));
 
-// const activitiesRoute = require("./routes/activitiesRoute"),
+const { sessionMiddleware } = require("./middleware/sessionMiddleware");
 
-// app.use("/api/ot", activitiesRoute);
+app.use(sessionMiddleware);
+
+const galleryRoute = require("./routes/gallery-routes"),
+  registerLoginRoute = require("./routes/registerLoginRoute.js");
+
+app.use("/mirror", galleryRoute, registerLoginRoute);
 
 app.all("/", (req, res) => {
   res.status(200).send({
