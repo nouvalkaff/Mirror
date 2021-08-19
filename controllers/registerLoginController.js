@@ -1,4 +1,4 @@
-
+const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const faker = require("faker")
 const Joi = require("joi")
@@ -158,6 +158,19 @@ exports.login = async (req,res) => {
 				)
 			}
 
+			const token = jwt.sign(
+				{
+					id: existingUser.dataValues.id,
+					full_name: existingUser.dataValues.full_name,
+					email: existingUser.dataValues.email,
+					profile_bio: existingUser.dataValues.profile_bio,
+					followers: existingUser.dataValues.followers,
+					following: existingUser.dataValues.following
+				},
+				process.env.SECRET_KEY,
+				{ expiresIn: "12h" }
+			)
+
 			const sess = req.session
 			const sessID = req.sessionID
 
@@ -167,6 +180,7 @@ exports.login = async (req,res) => {
 					success: true,
 					statusText: "OK",
 					message: "Login success",
+					token: token,
 					// verifyPwd: verifyPwd,
 					// sessionInfo: {
 					// 	sess,
@@ -182,6 +196,7 @@ exports.login = async (req,res) => {
 					success: true,
 					statusText: "OK",
 					message: "Login success",
+					token: token,
 					// verifyPwd: verifyPwd,
 					// sessionInfo: {
 					// 	sess,
@@ -205,6 +220,7 @@ exports.login = async (req,res) => {
 				success: true,
 				statusText: "OK",
 				message: "Login success",
+				token: token,
 				// verifyPwd: verifyPwd,
 				// sessionInfo: {
 				// 		sess,

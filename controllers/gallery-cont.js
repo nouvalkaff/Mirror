@@ -140,12 +140,35 @@ exports.getOnePhotobyUserID = async (req, res) => {
         message: "User ID is not found",
       });
     }
+
+		const userData = await User.findOne({
+			where: {
+				id: user_id
+			}
+		})
+
+		const token = jwt.sign(
+			{
+				id: userData.dataValues.id,
+				full_name: userData.dataValues.full_name,
+				email: userData.dataValues.email,
+				profile_bio: userData.dataValues.profile_bio,
+				followers: userData.dataValues.followers,
+				following: userData.dataValues.following
+			},
+			process.env.SECRET_KEY,
+			{ expiresIn: "12h" }
+		)
+
     return res.status(200).json({
       code: 200,
       statustext: "OK",
       success: true,
       message: "Successfully retrieve user's photos",
-      data: getImgByID,
+      data: {
+				getImgByID,
+				token,
+			}
     });
   } catch (err) {
     console.log(err);
