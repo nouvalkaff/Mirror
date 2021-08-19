@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk");
 require("dotenv").config();
 const { Gallery, User } = require("../models");
-
+const jwt = require("jsonwebtoken")
 var s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
   secretAccessKey: process.env.AWS_SECRET,
@@ -139,6 +139,7 @@ exports.getOnePhotobyUserID = async (req, res) => {
         success: false,
         message: "User ID is not found",
       });
+			return
     }
 
 		const userData = await User.findOne({
