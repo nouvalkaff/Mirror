@@ -20,12 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     followers: DataTypes.INTEGER,
     following: DataTypes.INTEGER,
     session_id: DataTypes.STRING,
-		timestamp: DataTypes.BIGINT,
+    timestamp: DataTypes.BIGINT,
   }, 
 	{
     sequelize,
     modelName: 'User',
-		tableName: 'User',
+    tableName: 'User',
   });
   return User;
 };

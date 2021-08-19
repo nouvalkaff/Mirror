@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
   Gallery.init(
     {
       user_id: DataTypes.STRING,
-      // photos: DataTypes.STRING,
       photos: DataTypes.ARRAY(DataTypes.JSONB),
     },
     {

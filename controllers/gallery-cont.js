@@ -22,15 +22,21 @@ exports.uploadPhoto = async (req, res) => {
     //   return;
     // }
 
-		//Get user id
-		// console.log("email in session: ",req.session.email)
-		const emailUser = req.session.email
-		// console.log("emailUser: ",emailUser);
-		const userData = await User.findOne({
-			where: { email: emailUser }
-		})
+    //Get user id
+    const emailUser = req.session.email;
 
-		
+    if (!emailUser) {
+      return res.status(409).send({
+        code: 409,
+        statustext: "Conflict",
+        success: false,
+        message: "Please login first",
+      });
+    }
+
+    const userData = await User.findOne({
+      where: { email: emailUser },
+    });
 
     //Preparing the params for uploading to AWS S3
     var params = [];
@@ -123,14 +129,13 @@ exports.getAllPhoto = async (req, res) => {
 };
 
 exports.getOnePhotobyUserID = async (req, res) => {
-  // SEKARANG MASIH PAKE ID GALLERY BUKAN USER
   try {
-		const user_id = req.query.user_id
-		const getImgByID = await Gallery.findOne({
-				where: {
-					user_id: user_id
-				}
-			})
+    const user_id = req.query.user_id;
+    const getImgByID = await Gallery.findOne({
+      where: {
+        user_id: user_id,
+      },
+    });
 
     if (!getImgByID) {
       res.status(404).json({
@@ -183,9 +188,8 @@ exports.getOnePhotobyUserID = async (req, res) => {
 };
 
 exports.deletePhotosbyUserID = async (req, res) => {
-  // SEKARANG MASIH PAKE ID GALLERY BUKAN USER
   try {
-  	const user_id = req.query.user_id
+    const user_id = req.query.user_id;
     const delPhotos = await Gallery.destroy({
       where: {
         user_id: user_id,
